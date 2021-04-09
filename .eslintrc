@@ -1,0 +1,14 @@
+
+{
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true
+  },
+  "plugins": ["react","prettier"],
+  "extends": ["prettier","eslint:recommended", "plugin:react/recommended"],
+  "rules": {
+      {... 'react/prop-types': ['off']},
+      "prettier/prettier": ["error"]
+      // overrides
+    }
+}
