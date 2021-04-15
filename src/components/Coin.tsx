@@ -1,46 +1,22 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
-import { useDispatch, useSelector } from "react-redux";
 
 import { colors } from "../config/colors";
-import { generateImageURL, formatMoney, write } from "../utils";
-import { addCrypto, deleteCrypto } from "../actions/crypto.action";
-import { StateProps } from "../types/main";
+import { generateImageURL, formatMoney } from "../utils";
+import { useCoin } from "../hooks";
 
 export const Coin = ({ data }: any) => {
-  const dispatch = useDispatch();
-  const { watchList } = useSelector((state: StateProps) => state.crypto);
+  const [isWatched, _addCrypto, _deleteCrypto] = useCoin();
 
   const { id, name, symbol, metrics } = data;
   const { price_usd, percent_change_usd_last_1_hour } = metrics.market_data;
-
-  useEffect(() => {
-    write("watchList", watchList);
-  }, [watchList]);
-
-  const isWatched = (id: string) => {
-    const found = watchList.find((wl: any) => wl.id === id);
-
-    if (found) {
-      return true;
-    }
-    return false;
-  };
 
   const generateMoneyColor = () => {
     if (percent_change_usd_last_1_hour < 0) {
       return styles.priceLow;
     }
     return styles.priceUp;
-  };
-
-  const _addCrypto = async (data: {}) => {
-    dispatch(addCrypto(data));
-  };
-
-  const _deleteCrypto = async (id: string) => {
-    dispatch(deleteCrypto(id));
   };
 
   return (

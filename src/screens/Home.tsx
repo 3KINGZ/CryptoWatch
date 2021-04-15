@@ -9,7 +9,7 @@ import {
 
 import { Coins } from "../components";
 import { colors } from "../config/colors";
-import { useOnLoad } from "../hooks/useOnLoad";
+import { useOnLoad } from "../hooks";
 
 export const Home = () => {
   const [loading, cryptos, message, offlineData, fetchCrypto] = useOnLoad();
