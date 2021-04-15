@@ -1,10 +1,9 @@
 import * as types from "../actions/types";
-
 interface Crypto {
   loading: boolean;
   cryptos: [] | null;
   message: string;
-  watchList: [];
+  watchList: [] | any;
 }
 
 const initialState: Crypto = {
@@ -44,6 +43,9 @@ const cryptoReducer = (state = initialState, action: ActionProps) => {
         message: payload || "unable to fetch data",
         loading: false,
       };
+
+    case types.SYNC_WATCHLIST:
+      return { ...state, watchList: [...state.watchList, ...payload] };
 
     default:
       return state;

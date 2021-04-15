@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { Coin } from "../components";
 import { colors } from "../config/colors";

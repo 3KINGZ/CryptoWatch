@@ -5,3 +5,5 @@ export const GET_ALL_CRYPTO = generateTypes("GET_ALL_CRYPTO");
 export const ADD_CRYPTO = "ADD_CRYPTO";
 
 export const DELETE_CRYPTO = "DELETE_CRYPTO";
+
+export const SYNC_WATCHLIST = "SYNC_WATCHLIST";

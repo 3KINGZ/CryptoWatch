@@ -5,7 +5,7 @@ import { Coin } from "./Coin";
 
 interface CoinsProps {
   cryptos: any;
-  onRefresh: () => {};
+  onRefresh: any;
   refreshing: boolean;
 }
 

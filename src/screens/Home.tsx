@@ -1,22 +1,18 @@
-import React, { useEffect } from "react";
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
-import { StateProps } from "../types/main";
+import React from "react";
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 
 import { Coins } from "../components";
-import { getCrypto } from "../actions/crypto";
 import { colors } from "../config/colors";
+import { useOnLoad } from "../hooks/useOnLoad";
 
 export const Home = () => {
-  const dispatch = useDispatch();
-
-  const { cryptos, message, loading } = useSelector(
-    (state: StateProps) => state.crypto,
-  );
-
-  useEffect(() => {
-    dispatch(getCrypto());
-  }, []);
+  const [loading, cryptos, message, offlineData, fetchCrypto] = useOnLoad();
 
   if (loading && !cryptos.length) {
     return (
@@ -29,13 +25,27 @@ export const Home = () => {
   return (
     <View style={styles.container}>
       {message ? (
-        <Text style={styles.errorMessage}>{message}</Text>
+        message && offlineData ? (
+          <>
+            <View style={styles.networkStatus}>
+              <Text style={styles.networkStatusText}>
+                No internet Connection? Reload
+              </Text>
+            </View>
+            <Coins
+              cryptos={offlineData}
+              onRefresh={fetchCrypto}
+              refreshing={loading}
+            />
+          </>
+        ) : (
+          <View style={styles.errorMessageContainer}>
+            <Text style={styles.errorMessage}>{message}</Text>
+            <Button title="Reload" onPress={fetchCrypto} />
+          </View>
+        )
       ) : (
-        <Coins
-          cryptos={cryptos}
-          onRefresh={() => dispatch(getCrypto())}
-          refreshing={loading}
-        />
+        <Coins cryptos={cryptos} onRefresh={fetchCrypto} refreshing={loading} />
       )}
     </View>
   );
@@ -46,16 +56,27 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grey,
     flex: 1,
   },
+  errorMessageContainer: {
+    paddingHorizontal: 10,
+  },
   errorMessage: {
     fontSize: 24,
     fontWeight: "700",
     color: "grey",
     textAlign: "center",
-    paddingVertical: 100,
+    paddingVertical: 50,
   },
   loadingContainer: {
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
+  },
+  networkStatus: {
+    backgroundColor: "black",
+    paddingVertical: 5,
+  },
+  networkStatusText: {
+    color: "white",
+    textAlign: "center",
   },
 });

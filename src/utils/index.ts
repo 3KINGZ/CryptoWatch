@@ -1,5 +1,6 @@
-import { isWatched } from "./index";
 import { imageURL } from "./constants";
+
+export * from "./cache";
 
 export const generateTypes = (type: string) => {
   return {

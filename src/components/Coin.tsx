@@ -1,15 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";
 
 import { colors } from "../config/colors";
-import { generateImageURL, formatMoney } from "../utils";
-import { addCrypto, deleteCrypto } from "../actions/crypto";
+import { generateImageURL, formatMoney, write } from "../utils";
+import { addCrypto, deleteCrypto } from "../actions/crypto.action";
 import { StateProps } from "../types/main";
 
 export const Coin = ({ data }: any) => {
+  const dispatch = useDispatch();
   const { watchList } = useSelector((state: StateProps) => state.crypto);
+
+  const { id, name, symbol, metrics } = data;
+  const { price_usd, percent_change_usd_last_1_hour } = metrics.market_data;
+
+  useEffect(() => {
+    write("watchList", watchList);
+  }, [watchList]);
 
   const isWatched = (id: string) => {
     const found = watchList.find((wl: any) => wl.id === id);
@@ -20,12 +28,6 @@ export const Coin = ({ data }: any) => {
     return false;
   };
 
-  const { id, name, symbol, metrics } = data;
-
-  const dispatch = useDispatch();
-
-  const { price_usd, percent_change_usd_last_1_hour } = metrics.market_data;
-
   const generateMoneyColor = () => {
     if (percent_change_usd_last_1_hour < 0) {
       return styles.priceLow;
@@ -33,21 +35,21 @@ export const Coin = ({ data }: any) => {
     return styles.priceUp;
   };
 
+  const _addCrypto = async (data: {}) => {
+    dispatch(addCrypto(data));
+  };
+
+  const _deleteCrypto = async (id: string) => {
+    dispatch(deleteCrypto(id));
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image
-          style={{ width: 35, height: 35, alignSelf: "center" }}
-          source={{ uri: generateImageURL(id) }}
-        />
-        <View
-          style={{
-            paddingLeft: 7,
-            width: 150,
-            justifyContent: "center",
-          }}>
+        <Image style={styles.image} source={{ uri: generateImageURL(id) }} />
+        <View style={styles.nameContainer}>
           <Text style={styles.coinName}>{name}</Text>
-          <Text style={{ fontSize: 16, color: "#5b686e" }}>{symbol}</Text>
+          <Text style={styles.symbol}>{symbol}</Text>
         </View>
       </View>
       <View style={{ alignItems: "flex-end" }}>
@@ -61,33 +63,21 @@ export const Coin = ({ data }: any) => {
                 name={
                   percent_change_usd_last_1_hour < 0 ? "arrowdown" : "arrowup"
                 }
-                style={[
-                  { fontSize: 16 },
-                  { alignSelf: "center" },
-                  generateMoneyColor(),
-                ]}
+                style={[styles.arrow, generateMoneyColor()]}
               />
             </View>
-            <Text
-              style={{ color: "#5b686e", textAlign: "right", paddingRight: 5 }}>
+            <Text style={styles.percentChange}>
               {percent_change_usd_last_1_hour.toFixed(5)}
             </Text>
           </View>
           <TouchableOpacity
             onPress={
-              !isWatched(id)
-                ? () => dispatch(addCrypto(data))
-                : () => dispatch(deleteCrypto(id))
+              !isWatched(id) ? () => _addCrypto(data) : () => _deleteCrypto(id)
             }>
             <Icon
               name="heart"
               color={isWatched(id) === true ? "red" : "white"}
-              style={{
-                alignSelf: "center",
-                fontSize: 24,
-                paddingLeft: 5,
-                paddingVertical: 10,
-              }}
+              style={styles.likeIcon}
             />
           </TouchableOpacity>
         </View>
@@ -115,9 +105,24 @@ const styles = StyleSheet.create({
     maxWidth: 50,
     flex: 1,
   },
+  image: { width: 35, height: 35, alignSelf: "center" },
+  nameContainer: {
+    paddingLeft: 7,
+    width: 150,
+    justifyContent: "center",
+  },
   coinName: {
     fontSize: 18,
     fontWeight: "700",
+  },
+  symbol: {
+    fontSize: 16,
+    color: colors.greyText2,
+  },
+  percentChange: {
+    color: colors.greyText2,
+    textAlign: "right",
+    paddingRight: 5,
   },
   priceUp: {
     color: colors.cyan,
@@ -127,5 +132,12 @@ const styles = StyleSheet.create({
   },
   arrow: {
     alignSelf: "center",
+    fontSize: 16,
+  },
+  likeIcon: {
+    alignSelf: "center",
+    fontSize: 24,
+    paddingLeft: 5,
+    paddingVertical: 10,
   },
 });
