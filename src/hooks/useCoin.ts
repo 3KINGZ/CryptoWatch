@@ -21,11 +21,11 @@ export const useCoin = () => {
     return false;
   };
 
-  const _addCrypto = async (data: {}) => {
+  const _addCrypto = (data: {}) => {
     dispatch(addCrypto(data));
   };
 
-  const _deleteCrypto = async (id: string) => {
+  const _deleteCrypto = (id: string) => {
     dispatch(deleteCrypto(id));
   };
 
