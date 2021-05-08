@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getCrypto, syncWatchList } from "../actions/crypto.action";
-import { StateProps } from "../types/main";
 import { read } from "../utils";
 
 export const useOnLoad = () => {
@@ -25,8 +24,9 @@ export const useOnLoad = () => {
 
   const getWatchList = async () => {
     if (!watchList.length) {
-      const data = await read("watchList");
-      dispatch(syncWatchList(data));
+      const watchList = await read("watchList");
+      const watchListMap = await read("watchListMap");
+      dispatch(syncWatchList(watchList, watchListMap));
     }
   };
 

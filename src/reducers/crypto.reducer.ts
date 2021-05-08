@@ -1,9 +1,11 @@
+import { WatchList } from "./../screens/WatchList";
 import * as types from "../actions/types";
 interface Crypto {
   loading: boolean;
   cryptos: [] | null;
   message: string;
   watchList: [] | any;
+  watchListMap: any;
 }
 
 const initialState: Crypto = {
@@ -11,11 +13,12 @@ const initialState: Crypto = {
   cryptos: [],
   message: "",
   watchList: [],
+  watchListMap: {},
 };
 
 interface ActionProps {
   type: string;
-  payload: [] | string;
+  payload: any;
 }
 
 const cryptoReducer = (state = initialState, action: ActionProps) => {
@@ -26,13 +29,22 @@ const cryptoReducer = (state = initialState, action: ActionProps) => {
       return { ...state, loading: true };
 
     case types.ADD_CRYPTO:
-      return { ...state, watchList: [...state.watchList, payload] };
+      const watchListMap = state.watchListMap;
+      watchListMap[payload.id] = true;
+
+      return {
+        ...state,
+        watchList: [...state.watchList, payload],
+        watchListMap: watchListMap,
+      };
 
     case types.DELETE_CRYPTO:
       const filteredItems = state.watchList.filter(
         (wl: any) => wl.id !== payload,
       );
-      return { ...state, watchList: [...filteredItems] };
+      const map: { [key: string]: any } = state.watchListMap;
+      delete map[payload];
+      return { ...state, watchList: [...filteredItems], watchListMap: map };
 
     case types.GET_ALL_CRYPTO.SUCCESS:
       return { ...state, message: "", cryptos: payload, loading: false };
@@ -45,7 +57,11 @@ const cryptoReducer = (state = initialState, action: ActionProps) => {
       };
 
     case types.SYNC_WATCHLIST:
-      return { ...state, watchList: [...state.watchList, ...payload] };
+      return {
+        ...state,
+        watchList: [...state.watchList, ...payload.watchList],
+        watchListMap: { ...state.watchListMap, ...payload.watchListMap },
+      };
 
     default:
       return state;

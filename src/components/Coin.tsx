@@ -7,9 +7,10 @@ import { generateImageURL, formatMoney } from "../utils";
 import { useCoin } from "../hooks";
 
 export const Coin = ({ data }: any) => {
+  const { id, name, symbol, metrics } = data;
+
   const [isWatched, _addCrypto, _deleteCrypto] = useCoin();
 
-  const { id, name, symbol, metrics } = data;
   const { price_usd, percent_change_usd_last_1_hour } = metrics.market_data;
 
   const generateMoneyColor = () => {
@@ -46,16 +47,15 @@ export const Coin = ({ data }: any) => {
               {percent_change_usd_last_1_hour.toFixed(5)}
             </Text>
           </View>
-          <TouchableOpacity
-            onPress={
-              !isWatched(id) ? () => _addCrypto(data) : () => _deleteCrypto(id)
-            }>
-            <Icon
-              name="heart"
-              color={isWatched(id) === true ? "red" : "white"}
-              style={styles.likeIcon}
-            />
-          </TouchableOpacity>
+          {isWatched(id) ? (
+            <TouchableOpacity onPress={() => _deleteCrypto(id)}>
+              <Icon name="heart" color="red" style={styles.likeIcon} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => _addCrypto(data)}>
+              <Icon name="heart" color="white" style={styles.likeIcon} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>

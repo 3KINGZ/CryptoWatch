@@ -1,4 +1,9 @@
-import { WatchList } from "./../screens/WatchList";
 interface StateProps {
-  crypto: { loading: boolean; cryptos: any; message: string; watchList: [] };
+  crypto: {
+    loading: boolean;
+    cryptos: any;
+    message: string;
+    watchList: [];
+    watchListMap: any;
+  };
 }

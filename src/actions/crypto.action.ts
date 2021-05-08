@@ -1,5 +1,5 @@
-import _axios from "../api/_axios";
 import * as types from "./types";
+import _axios from "../api/_axios";
 import { write } from "../utils";
 
 export const getCrypto = () => async (dispatch: any) => {
@@ -19,21 +19,26 @@ export const getCrypto = () => async (dispatch: any) => {
 };
 
 export const addCrypto = (data: any) => (dispatch: any, getState: any) => {
-  const state = getState().crypto;
-  const isFound = state.watchList.find((crypto: any) => crypto.id === data.id);
+  const { watchList, watchListMap } = getState().crypto;
+  const isFound = watchListMap?.[data.id];
 
   if (!isFound) {
     dispatch({ type: types.ADD_CRYPTO, payload: data });
-    write("watchList", state.watchList);
+    write("watchList", watchList);
     return true;
   }
-};
-
-export const syncWatchList = (watchList: any) => (dispatch: any) => {
-  dispatch({ type: types.SYNC_WATCHLIST, payload: watchList });
 };
 
 export const deleteCrypto = (id: string) => (dispatch: any) => {
   dispatch({ type: types.DELETE_CRYPTO, payload: id });
   return true;
+};
+
+export const syncWatchList = (watchList: any, watchListMap: any) => (
+  dispatch: any,
+) => {
+  dispatch({
+    type: types.SYNC_WATCHLIST,
+    payload: { watchList, watchListMap },
+  });
 };

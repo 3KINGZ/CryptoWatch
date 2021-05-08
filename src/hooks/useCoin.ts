@@ -1,23 +1,24 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addCrypto, deleteCrypto } from "../actions/crypto.action";
-import { StateProps } from "../types/main";
 import { write } from "../utils";
 
 export const useCoin = () => {
   const dispatch = useDispatch();
-  const { watchList } = useSelector((state: StateProps) => state.crypto);
+  const { watchList, watchListMap } = useSelector(
+    (state: StateProps) => state.crypto,
+  );
 
   useEffect(() => {
     write("watchList", watchList);
+    write("watchListMap", watchListMap);
   }, [watchList]);
 
   const isWatched = (id: string) => {
-    const found = watchList.find((wl: any) => wl.id === id);
-
-    if (found) {
+    if (watchListMap?.[id]) {
       return true;
     }
+
     return false;
   };
 
